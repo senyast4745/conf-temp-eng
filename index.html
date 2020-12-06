@@ -21,6 +21,9 @@
 			<section>
 				<h2>Шаблонизатор</h2>
 				<p> Или как мы оцифровали 100+ субсидий 💪</p>
+				<p>
+					<small>При поддержке комманды <a href="https://www.sberbank.ru/ru/about/main">Сберплатформы</a></img></small>
+				</p>
 			</section>
 			<section>
 				<section>
@@ -61,11 +64,17 @@
 				<section>
 					<h2>Как это работает? 🤖</h2>
 				</section>
-				<section data-background="./explain.gif">
+				<section data-background="./images/explain.gif">
 					<h3 style="color:black"> Давайте разбираться </h3>
 					<aside class="notes">
 						Для каждой субсидии мы выделили набор виджетов необходимых для её отображения. После этого мы составили список всех виджетов необходимых нам и принялись за их реализацию.
 					</aside>
+				</section>
+				<section>
+					<h3>Визуализация виджетов</h3>
+					<img src="./images/input-smeta.png"></img>
+					<img src="./images/input-text.png"></img>
+					<img src="./images/select.png"></img>
 				</section>
 			</section>
 			<section>
@@ -93,7 +102,7 @@ public class Grant {
 					<pre><code data-trim data-noescape>
 public class GrantValue {
 
-  private JsonNode parameter;
+  private JsonNode;
   private GrantValueKey key;
   private GrantValuePreFuncCode preFuncCode;
   private GrantValuePostFuncCode postFuncCode;
@@ -130,6 +139,7 @@ public class Request {
 					<pre><code data-trim data-noescape>
 public class RequestValue {
 
+  private Integer id;
   private JsonNode parameter;
   private GrantValueKey key;
   private GrantValuePreFuncCode preFuncCode;
@@ -181,6 +191,19 @@ public class RequestValueParameter {
 					</aside>
 				</section>
 				<section>
+					<pre><code data-trim data-noescape data-line-numbers="3,5">
+public class GrantValue {
+
+  private JsonNode parameter;
+  private GrantValueKey key;
+  private GrantValuePreFuncCode preFuncCode;
+  private GrantValuePostFuncCode postFuncCode;
+
+  //Getters and Setters
+}
+					</code></pre>
+				</section>
+				<section>
 					<pre><code data-trim data-noescape>
 {
   "parameter" : {"value": 0},
@@ -195,7 +218,7 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
   private final FooRepository fooRepository;
 
   @Override
-  public RequestValueDto preProcessJson(GrantValue grantValue) {
+  public RequestValue preProcessJson(GrantValue grantValue) {
     JsonNode parameter = grantValue.getParameter().deepCopy();
     Integer someCount = fooRepository.getSomeCount();
     ((ObjectNode) parameter).set("value", IntegerNode.valueOf(someCount));
@@ -219,12 +242,37 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 					<p>После того как пользователь ввёл данные, фронтенд отправляет <code>List&lt;RequestValueParameter&gt;</code> на бэкенд.</p>
 				</section>
 				<section>
+					<pre><code data-trim data-noescape>
+public class RequestValue {
+
+  private Integer id;
+  private JsonNode parameter;
+  private GrantValuePostFuncCode postFuncCode;
+
+  //Other fileds
+  //Getters and Setters
+}
+					</code></pre>
+					<pre><code data-trim data-noescape>
+public class RequestValueParameter {
+
+  private Integer requestValueId;
+  private JsonNode value;
+
+  //Getters and Setters
+}
+					</code></pre>
+					<aside class="notes">
+						Модель описывающая пользовательские данные, которые отправляет фронтенд.
+					</aside>
+				</section>
+				<section>
 					<pre><code data-trim data-noescape data-line-numbers="15-17|7-9|1-20">
 @Component
 public class FooGrantValueParameterPostprocessor implements GrantValueParameterPostprocessor {
 
   @Override
-  public RequestValueDto postProcessJson(RequestValue requestValue,
+  public RequestValue postProcessJson(RequestValue requestValue,
     RequestValueParameter requestValueParameter) {
     ((ObjectNode) requestValue.getParameter())
       .set("value", requestValueParameter.getValue());
@@ -235,7 +283,7 @@ public class FooGrantValueParameterPostprocessor implements GrantValueParameterP
   public void validate(RequestValueDto requestValue, Long userId,
     RequestValueParameterDto requestValueParameter) {
     if (requestValueParameter.getValue().asLong() <= 10) {
-      throw new RuntimeException("value must be less then 10");
+      throw new ValidationException("value must be less then 10");
     }
   }
 }
@@ -253,6 +301,31 @@ public class FooGrantValueParameterPostprocessor implements GrantValueParameterP
 						После того, как все поля прошли валидация по отдельности, мы начинаем валидировать поля связно. Для этого из модели Grant выбирается поле validationCode и с помощью него выбирается подходящий для этой субсидии валидатор
 						(GrantValueLinkValidator). Валидатор связей отвечает за поля, которые зависят друг от друга.
 					</aside>
+				</section>
+				<section>
+					<pre><code data-trim data-noescape data-line-numbers="5">
+public class Grant {
+
+	private List&lt;GrantValue&gt; grantValues;
+	private SumCounterCode counterCode;
+	private GrantLinkValidatatorKey validatorKey;
+
+	//Getters and Setters
+}
+					</code></pre>
+					<pre><code data-trim data-noescape data-line-numbers="4,5">
+public class RequestValue {
+
+  private Integer id;
+  private JsonNode parameter;
+  private GrantValueKey key;
+  private GrantValuePreFuncCode preFuncCode;
+  private GrantValuePostFuncCode postFuncCode;
+
+  //Other fileds
+  //Getters and Setters
+}
+					</code></pre>
 				</section>
 				<section>
 					<pre><code data-trim data-noescape>
@@ -289,7 +362,7 @@ public class FooGrantValueLinkValidator implements GrantValueLinkValidator {
     Long bValue = keyToRequestValue.get(GrantValueKey.B)
 		  .getParameter().get("value").asLong();
     if (aValue + bValue > 10) {
-      throw new RuntimeException("sum must be less then 10");
+      throw new ValidationException("sum must be less then 10");
     }
   }
 }
@@ -305,6 +378,31 @@ public class FooGrantValueLinkValidator implements GrantValueLinkValidator {
 						После того, как весь пользовательский был сохранен в соответсвующие RequestValue, для субсидии на которую подана заявка достается поле sumCounterCode и выбирается соответсвующий SumCounter. С помощью SumCounter#calculateSum по List
 						RequestValue для заявки высчитывается финальная сумма выдачи субсидии.
 					</aside>
+				</section>
+				<section>
+					<pre><code data-trim data-noescape data-line-numbers="5">
+public class Grant {
+
+  private List&lt;GrantValue&gt; grantValues;
+  private SumCounterCode counterCode;
+  private GrantLinkValidatatorKey validatorKey;
+
+  //Getters and Setters
+}
+					</code></pre>
+					<pre><code data-trim data-noescape data-line-numbers="4,5">
+public class RequestValue {
+
+  private Integer id;
+  private JsonNode parameter;
+  private GrantValueKey key;
+  private GrantValuePreFuncCode preFuncCode;
+  private GrantValuePostFuncCode postFuncCode;
+
+  //Other fileds
+  //Getters and Setters
+}
+					</code></pre>
 				</section>
 				<section>
 					<pre><code data-trim data-noescape>
