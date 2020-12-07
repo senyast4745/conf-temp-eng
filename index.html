@@ -191,6 +191,10 @@ public class RequestValueParameter {
 				<section>
 					<h3>Препроцессинг</h3>
 					<p>Первый шаг на пути пользователя к получению субсидии это создание <b>черновика заявки</b> на субсидию.</p>
+
+				</section>
+				<section>
+					<img src="./images/preprocessing.jpg"></img>
 					<aside class="notes">
 						Первый шаг на пути пользователя к получению субсидии это создание черновика заявки на субсидию.
 						При создании пользователем черновика заявки для конкретной субсидии достаются её List&lt;GrantValue&gt; и для каждого элемента этого списка выбирается GrantValueParameterPreprocessor и выполняется preProcessJson. Обычно функция
@@ -198,7 +202,6 @@ public class RequestValueParameter {
 
 						Заполненые RequestValue отправляются на фронтенд.
 
-						Проиллюстрирую примером.
 					</aside>
 				</section>
 				<section>
@@ -241,7 +244,7 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 					<pre><code data-trim data-noescape class="fragment">
 {
   "parameter" : {"value": 10},
-  ..
+  ...
 }
 					</code></pre>
 					<aside class="notes">
@@ -292,6 +295,9 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 				<section>
 					<h3>Пользовательский ввод</h3>
 					<p>После того как пользователь ввёл данные, фронтенд отправляет <code>List&lt;RequestValueParameter&gt;</code> на бэкенд.</p>
+				</section>
+				<section>
+					<img src="./images/postprocessing.jpg"></img>
 				</section>
 				<section>
 					<pre><code data-trim data-noescape>
@@ -377,6 +383,9 @@ public class FooGrantValueParameterPostprocessor implements GrantValueParameterP
 					</aside>
 				</section>
 				<section>
+					<img src="./images/link-validator.jpg"></img>
+				</section>
+				<section>
 					<pre><code data-trim data-noescape data-line-numbers="5">
 public class Grant {
 
@@ -454,6 +463,9 @@ public class FooGrantValueLinkValidator implements GrantValueLinkValidator {
 					</aside>
 				</section>
 				<section>
+					<img src="./images/sum-counter.jpg"></img>
+				</section>
+				<section>
 					<pre><code data-trim data-noescape data-line-numbers="4">
 public class Grant {
 
@@ -511,8 +523,8 @@ public class FooSumCounter implements SumCounter {
 				<section>
 					<h3>Минусы</h3>
 					<ul>
-						<li class="fragment">Довольно много кода, спецефичного для каждого нового виджета</li>
-						<li class="fragment">Некоторые субсидии требуют спецефичных виджетов</li>
+						<li class="fragment">Довольно много кода, специфичного для каждого нового виджета</li>
+						<li class="fragment">Некоторые субсидии требуют специфичных виджетов</li>
 						<li class="fragment">Логика по рассчету суммы субсидии, а так же какого то сложного препроцессинга, валидации и т.д. все равно пишется на <b>Java</b> для каждой субсидии отдельно</li>
 					</ul>
 				</section>
