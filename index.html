@@ -32,11 +32,16 @@
 					</h2>
 				</section>
 				<section>
-					В рамках проекта перед моей командой стояла задача перевести более <strong>100 субсидий</strong> в электронный вид. Каждая субсидия имеет свой абсолютно разный набор полей, который необходимо заполнить пользователя для подачи заявки на
-					субсидию.
-
+					<p>
+						Перевести более <b>100</b> субсидий в электронный вид.
+					</p>
 					<aside class="notes">
-						В рамках проекта перед моей командой стояла задача перевести более 100 субсидий в электронный вид. Каждая субсидия имеет свой абсолютно разный набор полей, который необходимо заполнить пользователя для подачи заявки на субсидию. Так же
+						Задача стояла следующим образом.
+						Раньше, для того чтобы человеку получить субсидию, ему надо было прийти с большим количеством бумаг в министерство, провести там много времени в очередях и заполнить заявку, потом пройти эти шаги ещё несколько раз по кругу.
+
+						На все это дело посмотрели и решили перевести все субсидии РТ в электронный вид.
+
+						Решая задачу оцифровки субсидий мы столкнулись с проблемой, что каждая субсидия имеет свой абсолютно разный набор полей, который необходимо заполнить пользователя для подачи заявки на субсидию. Так же
 						определенный набор полей необходимо было заполнить пользовательскими данными, которые отличаются от пользователя к пользователю. В ходе решения такой задачи и родился шаблонизатор о котором я сегодня вам расскажу.
 					</aside>
 				</section>
@@ -50,13 +55,15 @@
 				<section>
 					<h3> Начальные идеи: </h3>
 					<ul>
+						<li class="fragment">Java класс для каждой субсидии</li>
 						<li class="fragment">Генерация html на бэкенде</li>
 						<li class="fragment">Собственный формат на базе JSON</li>
 						<li class="fragment">Разбиение на набор виджетов</li>
 					</ul>
 					<aside class="notes">
-						Первый вариант нам не подходил потому фронт не мог навесить никакие Listener на тот код, который бы мы отправляли ему для отображения, второй вариант отпал из за того, что на каждую субсидию пришлось бы писать свой большой обработчик
-						того, что прислал фронт, поэтому мы остановились на третьем варианте.
+						Первый вариант плох потому что сильно засоряет код и почти лишает нас его переиспользования.
+						Второй вариант нам не подходил потому фронт не мог навесить никакие Listener на тот код, который бы мы отправляли ему для отображения, третий вариант отпал из за того, что на каждую субсидию пришлось бы писать свой большой обработчик
+						того, что прислал фронт, поэтому мы остановились на Четвертом варианте.
 					</aside>
 				</section>
 			</section>
@@ -67,7 +74,7 @@
 				<section data-background="./images/explain.gif">
 					<h3 style="color:black"> Давайте разбираться </h3>
 					<aside class="notes">
-						Для каждой субсидии мы выделили набор виджетов необходимых для её отображения. После этого мы составили список всех виджетов необходимых нам и принялись за их реализацию.
+						Мы посмотрели на все субсидии и выделили общий набор виджетов, необходимых для отображения любой субсидии. Для каждого виджета мы написали свою логику предобработки и валидации.
 					</aside>
 				</section>
 				<section>
@@ -98,7 +105,7 @@ public class Grant {
 }
 					</code></pre>
 					<aside class="notes">
-						Модель субсидии.
+						Модель субсидии на получение которой может податься человек.
 					</aside>
 				</section>
 				<section>
@@ -106,7 +113,7 @@ public class Grant {
 					<pre><code data-trim data-noescape>
 public class GrantValue {
 
-  private JsonNode;
+  private JsonNode parameter;
   private GrantValueKey key;
   private GrantValuePreFuncCode preFuncCode;
   private GrantValuePostFuncCode postFuncCode;
@@ -135,7 +142,7 @@ public class Request {
 }
 					</code></pre>
 					<aside class="notes">
-						Модель заявки на субсидию.
+						Модель заявки пользователя на субсидию.
 					</aside>
 				</section>
 				<section>
@@ -158,7 +165,7 @@ public class RequestValue {
 }
 					</code></pre>
 					<aside class="notes">
-						Модель описывающая заполненный виджеты прикрепленные к заявке на субсидию.
+						Модель описывающая заполненные виджеты прикрепленные к заявке на субсидию. То есть когда пользователь вводит какие то данные, мы сохраняем их прямо в виджете. Это удобно в равной мере как для обработки, так и для отображения
 					</aside>
 				</section>
 				<section>
@@ -212,6 +219,7 @@ public class GrantValue {
 {
   "parameter" : {"value": 0},
   "preFuncCode" : "fooGrantValueParameterPreprocessor",
+  ...
 }
 				  </code></pre>
 					<pre><code data-trim data-noescape class="fragment" data-line-numbers="9|10-11|12|1-14">
@@ -233,6 +241,7 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 					<pre><code data-trim data-noescape class="fragment">
 {
   "parameter" : {"value": 10},
+  ..
 }
 					</code></pre>
 					<aside class="notes">
@@ -240,6 +249,45 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 						Тогда мы выберем соответсвующий GrantValueParameterPreprocessor. Пусть в нашем репозитории лежат какие то необходимые нам данные. После этого мы вставим данные в параметр и метод grantValueToRequestValue создает новую RequestValue и
 						копирует туда все поля, вставляя новый параметр.
 					</aside>
+				</section>
+				<section data-background="./images/to-front.jpg">
+					<h3>Данные которые ушли на фронт</h3>
+					<p>
+					<pre><code data-trim data-noescape>
+[
+...
+  {
+    "id" : 5,
+    "parameter" : {
+      "value": 10,
+      "label": "Какие то данные пользователя"
+    },
+    "required" : false,
+    "hidden" : false,
+    "type" : "TEXT_VALUE",
+    "sort_number" : 5,
+    "preFuncCode" : "fooGrantValueParameterPreprocessor"
+  },
+  {
+    "id" : 6,
+    "parameter" : {
+      "value": 0,
+      "label": "Укажите какое то число",
+      "placeholder": "введите число",
+      "maxValue": 0,
+      "minValue": 0
+    },
+    "required" : false,
+    "hidden" : false,
+    "type" : "INPUT_NUMBER",
+    "sort_number" : 5
+    "preFuncCode" : "barGrantValueParameterPreprocessor",
+    "postFuncCode" : "barGrantValueParameterPostprocessor",
+    "key" : "bar"
+  },
+]
+				</code></pre>
+					</p>
 				</section>
 				<section>
 					<h3>Пользовательский ввод</h3>
@@ -266,9 +314,31 @@ public class RequestValueParameter {
   //Getters and Setters
 }
 					</code></pre>
-					<aside class="notes">
-						Модель описывающая пользовательские данные, которые отправляет фронтенд.
-					</aside>
+				</section>
+				<section data-background="./images/from-front.jpg">
+					<h3 style="color:black">Данные которые пришли с фронта</h3>
+					<pre><code data-trim data-noescape>
+[
+{
+  "id" : 6,
+  "parameter" : {
+    "value": 0,
+    "label": "Укажите какое то число",
+    "placeholder": "введите число",
+    "maxValue": 0,
+    "minValue": 0
+  },
+},
+]
+					</code></pre>
+					<pre><code data-trim data-noescape>
+[
+{
+  "requestValueId" : 6,
+  "parameter": 10
+},
+]
+					</code></pre>
 				</section>
 				<section>
 					<pre><code data-trim data-noescape data-line-numbers="15-17|7-9|1-20">
@@ -284,10 +354,10 @@ public class FooGrantValueParameterPostprocessor implements GrantValueParameterP
   }
 
   @Override
-  public void validate(RequestValueDto requestValue, Long userId,
-    RequestValueParameterDto requestValueParameter) {
+  public void validate(RequestValue requestValue, Long userId,
+    RequestValueParameterrequestValueParameter) {
     if (requestValueParameter.getValue().asLong() <= 10) {
-      throw new ValidationException("value must be less then 10");
+      throw new ValidationException("value must be more then 10");
     }
   }
 }
@@ -416,10 +486,10 @@ public class FooSumCounter implements SumCounter {
 
   private final UtilProcessor utilProcessor;
 
-  public BigDecimal calculateSum(List&lt;RequestValue&gt; jsonValues) {
+  public BigDecimal calculateSum(List&lt;RequestValue&gt; requestValues) {
     Map&lt;GrantValueKey, RequestValue&gt; keyToRequestValue = utilProcessor.listToMap(requestValues);
-    return keyToRequestValue.get(GrantValueKey.A)
-      .getParameter().get("value").asLong();;
+    return BigDecimal.valueOf(keyToRequestValue.get(GrantValueKey.A)
+      .getParameter().get("value").asLong());
   }
 }
 					</code></pre>
@@ -434,6 +504,7 @@ public class FooSumCounter implements SumCounter {
 					<ul>
 						<li class="fragment">Уменьшение однотипного кода</li>
 						<li class="fragment">Общий вид для каждой субсидии</li>
+						<li class="fragment">Сняли почти всю работу с фронта</li>
 						<li class="fragment">Аналитикам проще ставить задачи на создание новой субсидии</li>
 					</ul>
 				</section>
