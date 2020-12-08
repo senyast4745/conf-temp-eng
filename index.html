@@ -253,8 +253,8 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 						копирует туда все поля, вставляя новый параметр.
 					</aside>
 				</section>
-				<section data-background="./images/to-front.jpg">
-					<h3>Данные которые ушли на фронт</h3>
+				<section data-background="./images/rembo-1.jpg">
+					<h3 style="color:black">Данные которые ушли на фронт</h3>
 					<p>
 					<pre><code data-trim data-noescape>
 [
@@ -266,27 +266,18 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
       "label": "Какие то данные пользователя"
     },
     "required" : false,
-    "hidden" : false,
-    "type" : "TEXT_VALUE",
-    "sort_number" : 5,
-    "preFuncCode" : "fooGrantValueParameterPreprocessor"
+    "type" : "TEXT_VALUE"
   },
   {
     "id" : 6,
     "parameter" : {
       "value": 0,
       "label": "Укажите какое то число",
-      "placeholder": "введите число",
-      "maxValue": 0,
+      "maxValue": 10,
       "minValue": 0
     },
-    "required" : false,
-    "hidden" : false,
-    "type" : "INPUT_NUMBER",
-    "sort_number" : 5
-    "preFuncCode" : "barGrantValueParameterPreprocessor",
-    "postFuncCode" : "barGrantValueParameterPostprocessor",
-    "key" : "bar"
+    "required" : true,
+    "type" : "INPUT_NUMBER"
   },
 ]
 				</code></pre>
