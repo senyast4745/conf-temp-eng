@@ -316,25 +316,30 @@ public class RequestValueParameter {
 				<section data-background="./images/from-front.jpg">
 					<h3 style="color:black">Данные которые пришли с фронта</h3>
 					<pre><code data-trim data-noescape>
+// requestValue stored in the database
 [
-{
-  "id" : 6,
-  "parameter" : {
-    "value": 0,
-    "label": "Укажите какое то число",
-    "placeholder": "введите число",
-    "maxValue": 0,
-    "minValue": 0
+  {
+    "id" : 6,
+    "parameter" : {
+      "value": 0,
+      "label": "Укажите какое то число",
+      "placeholder": "введите число",
+      "maxValue": 0,
+      "minValue": 0
+    },
+		...
   },
-},
+  ...
 ]
 					</code></pre>
 					<pre><code data-trim data-noescape>
+// requestValueParameter that came from the frontend
 [
-{
-  "requestValueId" : 6,
-  "parameter": 10
-},
+  {
+    "requestValueId" : 6,
+    "parameter": 10
+  },
+  ...
 ]
 					</code></pre>
 				</section>
