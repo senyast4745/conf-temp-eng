@@ -3,6 +3,8 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 */
 
 .hljs {
+  font-size: 10pt;
+  line-height: 110%;
   display: block;
   overflow-x: auto;
   padding: 0.5em;

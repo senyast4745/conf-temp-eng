@@ -225,7 +225,7 @@ public class GrantValue {
   ...
 }
 				  </code></pre>
-					<pre><code data-trim data-noescape class="fragment" data-line-numbers="9|10-11|12|1-14">
+					<pre><code data-trim data-noescape class="fragment" data-line-numbers="9|10-11|12|1-14" >
 @Component
 @RequiredArgsConstructor
 public class FooGrantValueParameterPreprocessor extends GrantValueParameterPreprocessor {
@@ -258,7 +258,7 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
 					<p>
 					<pre><code data-trim data-noescape>
 [
-...
+  ...
   {
     "id" : 5,
     "parameter" : {
@@ -279,6 +279,7 @@ public class FooGrantValueParameterPreprocessor extends GrantValueParameterPrepr
     "required" : true,
     "type" : "INPUT_NUMBER"
   },
+  ...
 ]
 				</code></pre>
 					</p>
@@ -538,6 +539,7 @@ public class FooSumCounter implements SumCounter {
 		// - https://revealjs.com/initialization/
 		// - https://revealjs.com/config/
 		Reveal.initialize({
+			slideNumber: true,
 			hash: true,
 
 			// Learn about plugins: https://revealjs.com/plugins/
